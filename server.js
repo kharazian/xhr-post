@@ -16,9 +16,6 @@ res.sendFile(path.join(__dirname, '/index.html'))
 })
 
 app.post('/num', function (req, res) {
-    if (req.headers["content-type"] == 'application/json;charset=UTF-8') {
-        var num = req.body.value
-        console.log(num)
-        return res.end('done')       
-    }
+    console.log(req.body)
+    return res.end('done')       
 })

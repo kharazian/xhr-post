@@ -4,16 +4,40 @@
    XHR POST to Server
    </h1>
    <body>
+    <select id="content">
+      <option value="application/json">application/json</option>
+      <option value="application/xml">application/xml</option>
+      <option value="text/xml">text/xml</option>
+      <option value="application/x-www-form-urlencoded">application/x-www-form-urlencoded</option>
+    </select>
      <input type='text' id='num' />
      <script>
-       function send () {
-         var number = {
-           value: document.getElementById('num').value
-         }
-         var xhr = new window.XMLHttpRequest()
-         xhr.open('POST', '/num', true)
-         xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
-         xhr.send(JSON.stringify(number))
+      function send () {
+        var content = document.getElementById('content').value;
+        var num = document.getElementById('num').value;
+        var body;  
+        var xhr = new window.XMLHttpRequest()
+        xhr.open('POST', '/num', true)
+
+        if (content == 'application/json') {
+          body = JSON.stringify({ value: num });
+        }
+        else if (content == 'application/xml') {
+          body = escape(`<?xml version='1.0'?><value>` + num +`</value>`);
+        }
+        else if (content == 'text/xml') {
+          body = `<?xml version='1.0'?><value>` + num +`</value>`;
+        }
+        else if (content == 'application/x-www-form-urlencoded') {
+          body = 'value=' + num ;
+        }
+        xhr.setRequestHeader('Content-Type', content)
+        xhr.onreadystatechange = function() { 
+            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                alert(body);
+            }
+        }
+        xhr.send(body)           
        }
      </script>
      <button type='button' value='Send' name='Send' onclick='send()' >
