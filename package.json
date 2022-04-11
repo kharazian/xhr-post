@@ -18,6 +18,7 @@
   "homepage": "https://github.com/kharazian/xhr-post#readme",
   "dependencies": {
     "body-parser": "^1.20.0",
-    "express": "^4.17.3"
+    "express": "^4.17.3",
+    "kvin": "^1.2.9"
   }
 }

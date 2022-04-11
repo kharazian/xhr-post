@@ -5,38 +5,49 @@
    </h1>
    <body>
     <select id="content">
-      <option value="application/json">application/json</option>
-      <option value="application/xml">application/xml</option>
-      <option value="text/xml">text/xml</option>
-      <option value="application/x-www-form-urlencoded">application/x-www-form-urlencoded</option>
+      <option value="json">json</option>
+      <option value="kvin">kvin</option>
+      <option value="string">string</option>
+      <option value="array">array</option>
     </select>
      <input type='text' id='num' />
+     <script src="./js/kvin.js"></script>
      <script>
       function send () {
-        var content = document.getElementById('content').value;
-        var num = document.getElementById('num').value;
-        var body;  
+        var contentType = document.getElementById('content').value;
+        var num = {"L":9}//document.getElementById('num').value; 
         var xhr = new window.XMLHttpRequest()
         xhr.open('POST', '/num', true)
-
-        if (content == 'application/json') {
-          body = JSON.stringify({ value: num });
-        }
-        else if (content == 'application/xml') {
-          body = escape(`<?xml version='1.0'?><value>` + num +`</value>`);
-        }
-        else if (content == 'text/xml') {
-          body = `<?xml version='1.0'?><value>` + num +`</value>`;
-        }
-        else if (content == 'application/x-www-form-urlencoded') {
-          body = 'value=' + num ;
-        }
-        xhr.setRequestHeader('Content-Type', content)
+        let body = {};
         xhr.onreadystatechange = function() { 
             if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
                 alert(body);
             }
         }
+        if (contentType == 'json') {
+          body.contentType = 'application/json'
+          body.content = JSON.stringify(num);
+        }
+        else if (contentType == 'string') {
+          body.contentType = 'text/plain'
+          body.content = 'toString(num)';
+        }
+        else if (contentType == 'kvin') {
+          body.contentType = 'application/x-kvin'
+          body.content = KVIN.stringify(num);
+        }
+        else if (contentType == 'array') {
+          var bytesToSend = [253, 0, 128, 1, 111];
+          var bytesArray = new Uint8Array(bytesToSend);
+
+          xhr.setRequestHeader('content-type', 'application/octet-stream');
+          xhr.send(bytesArray);
+          return;
+        }
+        // xhr.setRequestHeader('Content-Type', body.content)
+        let entries = Object.entries(body);
+        body = entries.map((kvp) => `${encodeURIComponent(kvp[0])}=${encodeURIComponent(kvp[1])}`).join('&');
+        xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
         xhr.send(body)           
        }
      </script>
