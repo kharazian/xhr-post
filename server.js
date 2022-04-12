@@ -22,13 +22,13 @@ app.post('/num', function (req, res) {
     if (req.headers['content-type'] == 'application/octet-stream') {
         let msg=[];
         req.on('data',(chunk)=>{
-            console.log('chunk', chunk);
+            // console.log('chunk', chunk);
             if(chunk){
                 msg.push(chunk);
             }
         })
         req.on('end',()=>{
-            console.log('msg', msg);
+            // console.log('msg', msg);
             let buf = Buffer.concat(msg);
             console.log([].slice.call(buf));
         })

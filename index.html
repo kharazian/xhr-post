@@ -9,6 +9,7 @@
       <option value="kvin">kvin</option>
       <option value="string">string</option>
       <option value="array">array</option>
+      <option value="arraySlice">arraySlice</option>
     </select>
      <input type='text' id='num' />
      <script src="./js/kvin.js"></script>
@@ -17,12 +18,24 @@
         var contentType = document.getElementById('content').value;
         var num = {"L":9}//document.getElementById('num').value; 
         var xhr = new window.XMLHttpRequest()
-        xhr.open('POST', '/num', true)
+        xhr.open('POST', '/num', false)
         let body = {};
+        console.log(xhr.upload );
+        bytesPerChunk: 2 * 1024 * 1024
         xhr.onreadystatechange = function() { 
             if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
                 alert(body);
             }
+        }
+        xhr.addEventListener('progress', function(e) {
+            var done = e.position || e.loaded, total = e.totalSize || e.total;
+            console.log('xhr progress: ' + (Math.floor(done/total*1000)/10) + '%');
+        }, false);
+        if ( xhr.upload ) {
+            xhr.upload.onprogress = function(e) {
+                var done = e.position || e.loaded, total = e.totalSize || e.total;
+                console.log('xhr.upload progress: ' + done + ' / ' + total + ' = ' + (Math.floor(done/total*1000)/10) + '%');
+            };
         }
         if (contentType == 'json') {
           body.contentType = 'application/json'
@@ -36,9 +49,12 @@
           body.contentType = 'application/x-kvin'
           body.content = KVIN.stringify(num);
         }
-        else if (contentType == 'array') {
-          var bytesToSend = [253, 0, 128, 1, 111];
-          var bytesArray = new Uint8Array(bytesToSend);
+        else if (contentType == 'array' || contentType == 'arraySlice') {
+          var bytesArray = new Uint8Array(128 * 1024 * 1024);
+          for (let index = 0; index < bytesArray.length; index++) {
+            bytesArray[index] = index % 256;
+            
+          }
 
           xhr.setRequestHeader('content-type', 'application/octet-stream');
           xhr.send(bytesArray);
