@@ -50,7 +50,7 @@
           body.contentType = 'application/x-kvin'
           body.content = KVIN.stringify({"L":9});
         }
-        else if (contentType == 'array' || contentType == 'arraySlice') {
+        else if (contentType == 'array') {
           body = new Uint8Array(128)// * 1024 * 1024);
           // for (let index = 0; index < body.length; index++) {
           //   body[index] = index % 256;
@@ -58,6 +58,27 @@
           // }
           xhr.setRequestHeader('content-type', 'multipart/form-data');
           xhr.send(body);
+          return;
+        }
+        else if ( contentType == 'arraySlice'){
+          var path = "/test_javascript_upload.txt";
+          var content = "data to upload";
+          var accessToken = "<ACCESS_TOKEN>";
+          var uploadUrl = "https://content.dropboxapi.com/2/files/upload"
+          var result;
+
+          var xhr = new XMLHttpRequest();
+          xhr.onreadystatechange = function() {
+              if (xhr.readyState === 4) {
+                  result = xhr.responseText;
+                  console.log(result);
+              }
+          };
+          xhr.open("POST", uploadUrl, true);
+          xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+          xhr.setRequestHeader("Content-type", "application/octet-stream");
+          xhr.setRequestHeader("Dropbox-API-Arg", '{"path": "' + path + '"}');
+          xhr.send(content);
           return;
         }
         // xhr.setRequestHeader('Content-Type', body.content)
