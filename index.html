@@ -16,7 +16,8 @@
      <script>
       function send () {
         var contentType = document.getElementById('content').value;
-        var num = {"L":9}//document.getElementById('num').value; 
+        // var num = {"L":9}//document.getElementById('num').value; 
+        var num = "alalla"; 
         var xhr = new window.XMLHttpRequest()
         xhr.open('POST', '/num', false)
         let body = {};
@@ -39,25 +40,24 @@
         }
         if (contentType == 'json') {
           body.contentType = 'application/json'
-          body.content = JSON.stringify(num);
+          body.content = JSON.stringify({"L":9});
         }
         else if (contentType == 'string') {
           body.contentType = 'text/plain'
-          body.content = 'toString(num)';
+          body.content = "num";
         }
         else if (contentType == 'kvin') {
           body.contentType = 'application/x-kvin'
-          body.content = KVIN.stringify(num);
+          body.content = KVIN.stringify({"L":9});
         }
         else if (contentType == 'array' || contentType == 'arraySlice') {
-          var bytesArray = new Uint8Array(128 * 1024 * 1024);
-          for (let index = 0; index < bytesArray.length; index++) {
-            bytesArray[index] = index % 256;
+          body = new Uint8Array(128)// * 1024 * 1024);
+          // for (let index = 0; index < body.length; index++) {
+          //   body[index] = index % 256;
             
-          }
-
-          xhr.setRequestHeader('content-type', 'application/octet-stream');
-          xhr.send(bytesArray);
+          // }
+          xhr.setRequestHeader('content-type', 'multipart/form-data');
+          xhr.send(body);
           return;
         }
         // xhr.setRequestHeader('Content-Type', body.content)
