@@ -27,12 +27,12 @@ app.post('/num', function (req, res) {
                 msg.push(chunk);
             }
         })
-        req.on('end',()=>{
+        req.on('end',(data)=>{
             console.log('msg', msg);
             let buf = Buffer.concat(msg);
-            console.log([].slice.call(buf));
+            var a = JSON.parse(buf);
+            console.log(a);
         })
-        
     }
     else {
         console.log("llll", req.body)

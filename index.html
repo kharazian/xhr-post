@@ -89,52 +89,17 @@
           return;
         }
         else if ( contentType == 'multyPart'){
-          body = new FormData();
-          body.append("usearchcon",1);
-    body.append("begintime","2021-12-09 00:00:00");
-    body.append("endtime","2021-12- 9 23:59:59");
-    body.append("ustatus",2);
-    body.append("usex",2);
-    body.append("uage1",0);
-    body.append("uage2",100);
-    body.append("MjCardNo1","");
-    body.append("Searchname","");
-    body.append("nPageNo",1);
-    body.append("thispage",1);
-    body.append("pagenum",1);
-    body.append("CheckFindflag",4);
-    body.append("bdelete",0);
-    body.append("byear",0);
-    body.append("bmonth",0);
-    body.append("bday",0);
-    body.append("eyear",0);
-    body.append("emonth",0);
-    body.append("eday",0);
-    body.append("row","undefined");
-    body.append("imgSrc","C:\fakepath\IMG_20211203_114309_016 (1).jpg");
-    body.append("errCode","");
-    body.append("ucardtype",0);
-    body.append("MjCardNo","002"); // number card
-    body.append("ulisttype",0);
-    body.append("utype",2);
-    body.append("uname","fadil"); // name
-    body.append("Xsex",1); // pria 1 , wanita 2
-    body.append("unation","");
-    body.append("ucertype",0);
-    body.append("ucernumber","002"); // number card
-    body.append("ubirth",""); // tgl lahir
-    body.append("uphone","");
-    body.append("uplace","");
-    body.append("uaddr","");
-    body.append("uiccard","");
-    body.append("utext","");
-          // body = new Uint8Array(128)// * 1024 * 1024);
-          // for (let index = 0; index < body.length; index++) {
-          //   body[index] = index % 256;
+          // body = new FormData();
+          body.usearchcon = 1;
+          body.begintime = "2021-12-09 00:00:00";
+          var a = new Uint8Array(64 )//* 1024 * 1024);
+          for (let index = 0; index < a.length; index++) {
+            a[index] = index % 256;
             
-          // }
+          }
+          body.a = a;
           xhr.setRequestHeader('content-type', 'multipart/form-data');
-          xhr.send(body);
+          xhr.send(JSON.stringify(body));
           return;
         }
         // xhr.setRequestHeader('Content-Type', body.content)
