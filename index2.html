@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+   <h1>
+   XHR POST to Server
+   </h1>
+   <body>
+    <select id="content">
+      <option value="json">json</option>
+      <option value="kvin">kvin</option>
+      <option value="string">string</option>
+      <option value="array">array</option>
+      <option value="arraySlice">arraySlice</option>
+      <option value="multyPart">multyPart</option>
+    </select>
+     <input type='text' id='num' />
+     <script src="./js/kvin.js"></script>
+     <script>
+      function send () {
+        var contentType = document.getElementById('content').value;
+        // var num = {"L":9}//document.getElementById('num').value; 
+        var num = "alalla"; 
+        var xhr = new window.XMLHttpRequest()
+        xhr.open('POST', '/num', false)
+        let body = {};
+        console.log(xhr.upload );
+        bytesPerChunk: 2 * 1024 * 1024
+        xhr.onreadystatechange = function() { 
+            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                alert(body);
+            }
+        }
+        xhr.addEventListener('progress', function(e) {
+            var done = e.position || e.loaded, total = e.totalSize || e.total;
+            console.log('xhr progress: ' + (Math.floor(done/total*1000)/10) + '%');
+        }, false);
+        if ( xhr.upload ) {
+            xhr.upload.onprogress = function(e) {
+                var done = e.position || e.loaded, total = e.totalSize || e.total;
+                console.log('xhr.upload progress: ' + done + ' / ' + total + ' = ' + (Math.floor(done/total*1000)/10) + '%');
+            };
+        }
+        if (contentType == 'json') {
+          body.contentType = 'application/json'
+          body.content = JSON.stringify({"L":9});
+        }
+        else if (contentType == 'string') {
+          body.contentType = 'text/plain'
+          body.content = "num";
+        }
+        else if (contentType == 'kvin') {
+          body.contentType = 'application/x-kvin'
+          body.content = KVIN.stringify({"L":9});
+        }
+        else if (contentType == 'array') {
+          body = new Uint8Array(128)// * 1024 * 1024);
+          // for (let index = 0; index < body.length; index++) {
+          //   body[index] = index % 256;
+            
+          // }
+          xhr.setRequestHeader('content-type', 'multipart/form-data');
+          xhr.send(body);
+          return;
+        }
+        else if ( contentType == 'arraySlice'){
+          var accessToken = "token";
+          var uploadUrl = "https://content.dropboxapi.com/2/files/upload"
+          var result;
+          var passedData = new Array("one", "two", "three")
+          var filename = "test.txt";
+          var file = new File(passedData, filename);
+
+          var xhr = new XMLHttpRequest();
+          xhr.onreadystatechange = function() {
+              if (xhr.readyState === 4) {
+                  result = xhr.responseText;
+                  console.log(result);
+              }
+          };
+          xhr.open("POST", uploadUrl, true);
+          xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+          xhr.setRequestHeader("Content-type", "application/octet-stream");
+          xhr.setRequestHeader('Dropbox-API-Arg', JSON.stringify({
+              path: '/' +  file.name,
+              mode: 'add',
+              autorename: true,
+              mute: false,
+          }));
+          xhr.send(file);
+          return;
+        }
+        else if ( contentType == 'multyPart'){
+          // body = new FormData();
+          body.usearchcon = 1;
+          body.begintime = "2021-12-09 00:00:00";
+          var a = new Uint8Array(64 )//* 1024 * 1024);
+          for (let index = 0; index < a.length; index++) {
+            a[index] = index % 256;
+            
+          }
+          body.a = a;
+          xhr.setRequestHeader('content-type', 'multipart/form-data');
+          xhr.send(JSON.stringify(body));
+          return;
+        }
+        // xhr.setRequestHeader('Content-Type', body.content)
+        let entries = Object.entries(body);
+        body = entries.map((kvp) => `${encodeURIComponent(kvp[0])}=${encodeURIComponent(kvp[1])}`).join('&');
+        xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
+        xhr.send(body)           
+       }
+     </script>
+     <button type='button' value='Send' name='Send' onclick='send()' >
+       Send
+     </button>
+   </body>
+</html>
